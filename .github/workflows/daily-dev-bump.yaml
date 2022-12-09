@@ -1,12 +1,14 @@
+name: Daily Dev Bump
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '0 0 * * *'
-    - cron: '*/5 * * * *' # TODO REMOVE THIS LINE
   pull_request:
-    types: [labeled, unlabeled]
+    types: [labeled, unlabeled] # TODO REMOVE THIS LINE
 
-permissions: write-all
+permissions:
+  actions: write
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
