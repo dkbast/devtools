@@ -1,0 +1,52 @@
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '0 0 * * *'
+    - cron: '*/5 * * * *' # TODO REMOVE THIS LINE
+  workflow_dispatch:
+
+permissions: write-all
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  bump-dev-version:
+    name: Bump Dev Version
+    runs-on: ubuntu-latest
+    steps:
+    - name: git clone devtools
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      with:
+        ref: daily-bumps
+
+    - uses: dart-lang/setup-dart@v1.3
+      
+    - name: setup git config
+      run: |
+        # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+        git config user.name "Dan Chevalier's GitHub Actions Bot"
+        git config user.email "chevalier.dan@gmail.com"
+
+    - name: Bump the Dev Version
+      id: version-bump
+      run: |
+        # TODO: Check for dev in current version before bumping
+        pushd tool/
+        dart pub get
+        popd
+        
+        # Get the commit message
+        COMMIT_MESSAGE=$(dart tool/update_version.dart auto --dry-run --type dev)
+        echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+        # Do the update
+        dart tool/update_version.dart auto --type dev
+
+
+    - name: commit
+      run: |
+        # Stage the file, commit and push
+
+        git commit -a -m "$COMMIT_MESSAGE"
+        git push
+      env:
+        COMMIT_MESSAGE: ${{ steps.version-bump.outputs.COMMIT_MESSAGE }}

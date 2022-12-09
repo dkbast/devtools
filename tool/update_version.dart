@@ -69,16 +69,16 @@ String? incrementVersionByType(String version, String type) {
   var minor = int.parse(semVerMatch.namedGroup('minor')!, radix: 10);
   var patch = int.parse(semVerMatch.namedGroup('patch')!, radix: 10);
   switch (type) {
-    case 'major':
+    case 'next-major':
       major++;
       minor = 0;
       patch = 0;
       break;
-    case 'minor':
+    case 'next-minor':
       minor++;
       patch = 0;
       break;
-    case 'patch':
+    case 'next-patch':
       patch++;
       break;
     default:
@@ -189,7 +189,7 @@ void writeVersionToIndexHtml(
   indexHtml.writeAsStringSync(revisedLines.joinWithNewLine());
 }
 
-String incrementDevVersion(String currentVersion, String devType) {
+String incrementDevVersion(String currentVersion) {
   final alreadyHasDevVersion = isDevVersion(currentVersion);
   if (alreadyHasDevVersion) {
     final devVerMatch = RegExp(
@@ -208,8 +208,17 @@ String incrementDevVersion(String currentVersion, String devType) {
       return newVersion;
     }
   } else {
-    final nextVersion = incrementVersionByType(currentVersion, devType);
-    return '$nextVersion-dev.0';
+    return '$currentVersion-dev.0';
+  }
+}
+
+String stripPreReleases(String currentVersion) {
+  final devVerMatch =
+      RegExp(r'^(?<semver>\d+\.\d+\.\d+).*$').firstMatch(currentVersion);
+  if (devVerMatch == null) {
+    throw 'Could not strip pre-releases from version: $currentVersion';
+  } else {
+    return devVerMatch.namedGroup('semver')!;
   }
 }
 
@@ -280,48 +289,84 @@ class AutoUpdateCommand extends Command {
   final name = 'auto';
   @override
   final description = 'Automatically update devtools to a new version.';
-
   AutoUpdateCommand() {
-    argParser.addOption('type',
-        abbr: 't',
-        allowed: ['dev', 'dev,patch', 'dev,major', 'patch', 'minor', 'major'],
-        allowedHelp: {
-          'dev':
-              'bumps the version to the next dev pre-release value (minor by default)',
-          'dev,patch': 'bumps the version to the next dev pre-patch value',
-          'dev,major': 'bumps the version to the next dev pre-major value',
-          'patch': 'bumps the version to the next patch value',
-          'minor': 'bumps the version to the next minor value',
-          'major': 'bumps the version to the next major value',
-        },
-        mandatory: true,
-        help: 'Bumps the devtools version by the selected type.');
+    argParser.addOption(
+      'type',
+      abbr: 't',
+      allowed: ['release', 'dev', 'next-patch', 'next-minor', 'next-major'],
+      allowedHelp: {
+        'release': [
+          'strips any pre-release versions from the version.',
+          'Examples:',
+          '\t1.2.3       => 1.2.3',
+          '\t1.2.3-dev.4 => 1.2.3',
+        ].join('\n'),
+        'dev': [
+          'bumps the version to the next dev pre-release value (minor by default).',
+          'Examples:',
+          '\t1.2.3       => 1.2.3-dev.0',
+          '\t1.2.3-dev.4 => 1.2.3-dev.5',
+        ].join('\n'),
+        'next-patch': [
+          'bumps the version to the next patch value, and sets the dev version to 0.',
+          'Examples:',
+          '\t1.2.3       => 1.2.4-dev.0',
+          '\t1.2.3-dev.4 => 1.2.4-dev.0',
+        ].join('\n'),
+        'next-minor': [
+          'bumps the version to the next minor value, and sets the dev version to 0.',
+          'Examples:',
+          '\t1.2.3       => 1.3.0-dev.0',
+          '\t1.2.3-dev.4 => 1.3.0-dev.0',
+        ].join('\n'),
+        'next-major': [
+          'bumps the version to the next major value, and sets the dev version to 0.',
+          'Examples:', //Example:\n\t\n\t
+          '\t1.2.3       => 2.0.0-dev.0',
+          '\t1.2.3-dev.4 => 2.0.0-dev.0',
+        ].join('\n'),
+      },
+      mandatory: true,
+      help: 'Bumps the devtools version by the selected type.',
+    );
+    argParser.addFlag(
+      'dry-run',
+      abbr: 'd',
+      defaultsTo: false,
+      help: 'Displays the version change that would happen, without performing '
+          'it.',
+    );
   }
 
   @override
-  void run() {
+  void run() async {
     final type = argResults!['type'].toString();
+    final isDryRun = argResults!['dry-run'];
     final currentVersion = versionFromPubspecFile();
     String? newVersion;
     if (currentVersion == null) {
       throw 'Could not automatically determine current version.';
     }
     switch (type) {
+      case 'release':
+        newVersion = stripPreReleases(currentVersion);
+        break;
       case 'dev':
-        newVersion = incrementDevVersion(currentVersion, 'minor');
-        break;
-      case 'dev,patch':
-        newVersion = incrementDevVersion(currentVersion, 'patch');
-        break;
-      case 'dev,major':
-        newVersion = incrementDevVersion(currentVersion, 'major');
+        newVersion = incrementDevVersion(currentVersion);
         break;
       default:
         newVersion = incrementVersionByType(currentVersion, type);
+        if (newVersion == null) {
+          throw 'Failed to determine the newVersion.';
+        }
+        newVersion = incrementDevVersion(newVersion);
     }
-    if (newVersion == null) {
-      throw 'Failed to determine the newVersion.';
+    print('Updating from $currentVersion to $newVersion');
+
+    if (isDryRun) {
+      return;
     }
+
     performTheVersionUpdate(
       currentVersion: currentVersion,
       newVersion: newVersion,
