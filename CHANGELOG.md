@@ -1,21 +1,3 @@
-## 2.20.0-dev.5
-* Dev version
-
-## 2.20.0-dev.4
-* Dev version
-
-## 2.20.0-dev.3
-* Dev version
-
-## 2.20.0-dev.2
-* Dev version
-
-## 2.20.0-dev.1
-* Dev version
-
-## 2.20.0-dev.0
-* Dev version
-
 ## 2.20.0
 * Prepare for 2.20.0 release [#4843](https://github.com/flutter/devtools/pull/4843)
 * Turn off all rebuild related UI when the flag is off [#4840](https://github.com/flutter/devtools/pull/4840)

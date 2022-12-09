@@ -69,16 +69,16 @@ String? incrementVersionByType(String version, String type) {
   var minor = int.parse(semVerMatch.namedGroup('minor')!, radix: 10);
   var patch = int.parse(semVerMatch.namedGroup('patch')!, radix: 10);
   switch (type) {
-    case 'next-major':
+    case 'major':
       major++;
       minor = 0;
       patch = 0;
       break;
-    case 'next-minor':
+    case 'minor':
       minor++;
       patch = 0;
       break;
-    case 'next-patch':
+    case 'patch':
       patch++;
       break;
     default:
