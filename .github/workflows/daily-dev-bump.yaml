@@ -7,7 +7,7 @@ on:
     types: [labeled, unlabeled] # TODO REMOVE THIS LINE
 
 permissions:
-  actions: write
+  contents: write
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
