@@ -45,9 +45,9 @@ jobs:
         Upgrade the current patch, minor, or major version then do a \
         dev prerelease in order to continue"
 
-      echo "::error ,title=Cannot Bump A Release Version::$ERROR_DESCRIPTION"          
-      exit 1;
-    fi
+          echo "::error ,title=Cannot Bump A Release Version::$ERROR_DESCRIPTION" 
+          exit 1;
+        fi
     
         # Get the commit message
         COMMIT_MESSAGE=$(dart tool/update_version.dart auto --dry-run --type dev)
