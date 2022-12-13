@@ -33,6 +33,7 @@ jobs:
     - name: Bump the Dev Version
       id: version-bump
       run: |
+        set -x
         pushd tool/
         dart pub get
         popd
