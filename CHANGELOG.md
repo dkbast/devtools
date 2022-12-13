@@ -1,3 +1,9 @@
+## 2.20.1-dev.0
+* Dev version
+
+## 2.20.1
+TODO: update changelog
+
 ## 2.20.0
 * Prepare for 2.20.0 release [#4843](https://github.com/flutter/devtools/pull/4843)
 * Turn off all rebuild related UI when the flag is off [#4840](https://github.com/flutter/devtools/pull/4840)
