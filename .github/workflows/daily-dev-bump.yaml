@@ -3,6 +3,8 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '0 0 * * *'
+  pull_request:
+    types: [labeled, unlabeled] # TODO REMOVE THIS LINE
 
 permissions:
   contents: write
@@ -18,7 +20,7 @@ jobs:
     - name: git clone devtools
       uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       with:
-        ref: master
+        ref:  bump-test # TODO: Change to master
 
     - uses: dart-lang/setup-dart@v1.3
       
@@ -31,14 +33,22 @@ jobs:
     - name: Bump the Dev Version
       id: version-bump
       run: |
-        # TODO: Check for dev in current version before bumping
         pushd tool/
         dart pub get
         popd
+
+        CURRENT_VERSION=$(dart tool/update_version.dart current-version)
+        if ! echo "$CURRENT_VERSION" | grep -q " -dev\.[0-9]$"; then
+          echo "Doing a Dev bump on a release version is not supported. \
+          Upgrade the current patch, minor, or major version then do a \
+          dev prerelease in order to continue"
+          exit 1;
+        fi
         
         # Get the commit message
         COMMIT_MESSAGE=$(dart tool/update_version.dart auto --dry-run --type dev)
         echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+
         # Do the update
         dart tool/update_version.dart auto --type dev
 
