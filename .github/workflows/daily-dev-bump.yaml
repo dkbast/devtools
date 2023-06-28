@@ -101,7 +101,7 @@ jobs:
           if [ "$IS_DRAFT" == "true" ]; then
             CREATION_FLAGS="--draft"
           fi
-
+          gh api user
           PR_URL=$(gh pr create --title "$COMMIT_MESSAGE" --body "Automated Version Bump" $CREATION_FLAGS) 
 
           # Change github credentials back to the actions bot.
