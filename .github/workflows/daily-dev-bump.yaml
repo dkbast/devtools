@@ -99,7 +99,7 @@ jobs:
           # Stage the file, commit and push
           git checkout -b "$BRANCH_NAME"
           git commit -a -m "$COMMIT_MESSAGE"
-          git push -u bot-fork "$BRANCH_NAME"
+          git push -u https://${GH_TOKEN}@github.com/DartDevtoolWorkflowBot/devtools "$BRANCH_NAME"
 
           if [ "$IS_DRAFT" == "true" ]; then
             CREATION_FLAGS="--draft"
