@@ -94,11 +94,12 @@ jobs:
           set -ex
           git config user.name "DartDevtoolWorkflowBot"
           git config user.email "dart-devtool-workflow-bot@google.com"
+          git remote add bot-fork git@github.com:DartDevtoolWorkflowBot/devtools.git
           BRANCH_NAME="auto-bump-$(date +%s)"
           # Stage the file, commit and push
           git checkout -b "$BRANCH_NAME"
           git commit -a -m "$COMMIT_MESSAGE"
-          git push -u origin "$BRANCH_NAME"
+          git push -u bot-fork "$BRANCH_NAME"
 
           if [ "$IS_DRAFT" == "true" ]; then
             CREATION_FLAGS="--draft"
