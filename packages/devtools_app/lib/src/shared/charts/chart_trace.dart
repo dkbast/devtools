@@ -325,7 +325,7 @@ class AxisScale {
       _computedMax = _calculateMax();
       final exponentFraction = _exponentFraction(_range);
       labelUnitExponent = exponentFraction['exponent'];
-      labelTicks = exponentFraction['fraction'].roundToDouble();
+      labelTicks = (exponentFraction['fraction'] as num).roundToDouble();
     } else {
       _tickSpacing = 1;
       _computedMin = 0;

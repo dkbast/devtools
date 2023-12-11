@@ -307,9 +307,9 @@ class OfflinePerformanceData extends PerformanceData {
         );
 
   static OfflinePerformanceData parse(Map<String, dynamic> json) {
+    final traceEventData = json[PerformanceData.traceEventsKey] as List?;
     final List<Map<String, dynamic>> traceEvents =
-        (json[PerformanceData.traceEventsKey] ?? [])
-            .cast<Map<String, dynamic>>();
+        (traceEventData ?? []).cast<Map<String, dynamic>>();
 
     final Map<String, dynamic> cpuProfileJson =
         json[PerformanceData.cpuProfileKey] ?? <String, Object>{};
@@ -336,15 +336,15 @@ class OfflinePerformanceData extends PerformanceData {
 
     final Map<String, dynamic> selectedEventJson =
         json[PerformanceData.selectedEventKey] ?? {};
+    final firstTraceData =
+        selectedEventJson[TimelineEvent.firstTraceKey] as Map?;
     final OfflineTimelineEvent? selectedEvent = selectedEventJson.isNotEmpty
-        ? OfflineTimelineEvent(
-            (selectedEventJson[TimelineEvent.firstTraceKey] ?? {})
-                .cast<String, Object>(),
-          )
+        ? OfflineTimelineEvent((firstTraceData ?? {}).cast<String, Object>())
         : null;
 
     final displayRefreshRate =
-        json[PerformanceData.displayRefreshRateKey] ?? defaultRefreshRate;
+        json[PerformanceData.displayRefreshRateKey] as num? ??
+            defaultRefreshRate;
 
     final Map<String, dynamic> rebuildCountModelJson =
         json[PerformanceData.rebuildCountModelKey] ?? {};
@@ -410,13 +410,13 @@ class OfflineTimelineEvent extends TimelineEvent {
           ),
         ) {
     time.end = Duration(
-      microseconds: firstTrace[TraceEvent.timestampKey] +
-          firstTrace[TraceEvent.durationKey],
+      microseconds: (firstTrace[TraceEvent.timestampKey] as int) +
+          firstTrace[TraceEvent.durationKey] as int,
     );
+    final typeArg =
+        (firstTrace[TraceEvent.argsKey] as Map)[TraceEvent.typeKey].toString();
     type = TimelineEventType.values.firstWhere(
-      (t) =>
-          t.toString() ==
-          firstTrace[TraceEvent.argsKey][TraceEvent.typeKey].toString(),
+      (t) => t.toString() == typeArg,
       orElse: () => TimelineEventType.other,
     );
   }

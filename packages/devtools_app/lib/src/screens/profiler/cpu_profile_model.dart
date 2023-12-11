@@ -177,7 +177,8 @@ class CpuProfileData {
           ? (TimeRange()
             ..start = Duration(microseconds: json[timeOriginKey])
             ..end = Duration(
-              microseconds: json[timeOriginKey] + json[timeExtentKey],
+              microseconds:
+                  (json[timeOriginKey] as int) + (json[timeExtentKey] as int),
             ))
           : null,
     );
@@ -211,9 +212,9 @@ class CpuProfileData {
     }
 
     // Initialize all CPU samples.
-    final stackTraceEvents =
-        (json[traceEventsKey] ?? []).cast<Map<String, dynamic>>();
+    final stackTraceEvents = (json[traceEventsKey] ?? []) as List;
     final samples = stackTraceEvents
+        .cast<Map<String, dynamic>>()
         .map((trace) => CpuSampleEvent.parse(trace))
         .toList()
         .cast<CpuSampleEvent>();
@@ -604,7 +605,7 @@ class CpuProfileData {
     String isolateId,
     Map<String, dynamic> traceObject,
   ) async {
-    final stackFrames = traceObject[CpuProfileData.stackFramesKey]
+    final stackFrames = (traceObject[CpuProfileData.stackFramesKey] as Map)
         .values
         .cast<Map<String, dynamic>>();
     final stackFramesWaitingOnPackageUri = <Map<String, dynamic>>[];
@@ -798,12 +799,9 @@ class CpuSampleEvent extends TraceEvent {
 
   factory CpuSampleEvent.parse(Map<String, dynamic> traceJson) {
     final leafId = traceJson[CpuProfileData.stackFrameIdKey];
-    final userTag = traceJson[TraceEvent.argsKey] != null
-        ? traceJson[TraceEvent.argsKey][CpuProfileData.userTagKey]
-        : null;
-    final vmTag = traceJson[TraceEvent.argsKey] != null
-        ? traceJson[TraceEvent.argsKey][CpuProfileData.vmTagKey]
-        : null;
+    final args = traceJson[TraceEvent.argsKey] as Map?;
+    final userTag = args != null ? args[CpuProfileData.userTagKey] : null;
+    final vmTag = args != null ? args[CpuProfileData.vmTagKey] : null;
     return CpuSampleEvent(
       leafId: leafId,
       userTag: userTag,

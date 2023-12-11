@@ -80,9 +80,8 @@ class ImportController {
     }
 
     final connectedApp =
-        (devToolsSnapshot[DevToolsExportKeys.connectedApp.name] ??
-                <String, Object>{})
-            .cast<String, Object>();
+        (devToolsSnapshot[DevToolsExportKeys.connectedApp.name] as Map?)
+            ?.cast<String, Object>();
     offlineController
       ..enterOfflineMode(offlineApp: OfflineConnectedApp.parse(connectedApp))
       ..offlineDataJson = devToolsSnapshot;

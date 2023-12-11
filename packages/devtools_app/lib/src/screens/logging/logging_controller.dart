@@ -305,7 +305,7 @@ class LoggingController extends DisposableController
   void _handleGCEvent(Event e) {
     final HeapSpace newSpace = HeapSpace.parse(e.json!['new'])!;
     final HeapSpace oldSpace = HeapSpace.parse(e.json!['old'])!;
-    final isolateRef = e.json!['isolate'];
+    final isolateRef = e.json!['isolate'] as Map;
 
     final int usedBytes = newSpace.used! + oldSpace.used!;
     final int capacityBytes = newSpace.capacity! + oldSpace.capacity!;
@@ -330,7 +330,7 @@ class LoggingController extends DisposableController
   void _handleDeveloperLogEvent(Event e) {
     final VmServiceWrapper? service = serviceConnection.serviceManager.service;
 
-    final logRecord = e.json!['logRecord'];
+    final logRecord = e.json!['logRecord'] as Map;
 
     String? loggerName =
         _valueAsString(InstanceRef.parse(logRecord['loggerName']));
@@ -745,7 +745,7 @@ class FrameInfo {
   static FrameInfo from(Map<String, dynamic> data) {
     return FrameInfo(
       data['number'],
-      data['elapsed'] / 1000,
+      (data['elapsed'] as num) / 1000,
     );
   }
 
@@ -781,11 +781,13 @@ class ImageSizesForFrame {
     //       "decodedSizeInBytes": 87381
     //     }
 
-    return data.values.map((entry) {
+    final values = data.cast<String, Map>().values;
+    return values.map((entry_) {
+      final entry = entry_.cast<String, Object?>();
       return ImageSizesForFrame(
-        entry['source'],
-        entry['displaySize'],
-        entry['imageSize'],
+        entry['source'] as String?,
+        (entry['displaySize'] as Map?)?.cast<String, Object?>(),
+        (entry['imageSize'] as Map?)?.cast<String, Object?>(),
         entry,
       );
     }).toList();

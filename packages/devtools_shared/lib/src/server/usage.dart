@@ -136,28 +136,31 @@ class DevToolsUsage {
 
   int get surveyShownCount {
     assert(activeSurvey != null);
-    final prop = properties[activeSurvey!];
+    final prop = properties[activeSurvey!] as Map;
     if (prop[_surveyShownCount] == null) {
       rewriteActiveSurvey(prop[_surveyActionTaken], 0);
     }
-    return properties[activeSurvey!][_surveyShownCount];
+    return (properties[activeSurvey!] as Map)[_surveyShownCount];
   }
 
   void incrementSurveyShownCount() {
     assert(activeSurvey != null);
     surveyShownCount; // Ensure surveyShownCount has been initialized.
-    final prop = properties[activeSurvey!];
-    rewriteActiveSurvey(prop[_surveyActionTaken], prop[_surveyShownCount] + 1);
+    final prop = properties[activeSurvey!] as Map;
+    rewriteActiveSurvey(
+      prop[_surveyActionTaken],
+      (prop[_surveyShownCount] as int) + 1,
+    );
   }
 
   bool get surveyActionTaken {
     assert(activeSurvey != null);
-    return properties[activeSurvey!][_surveyActionTaken] == true;
+    return (properties[activeSurvey!] as Map)[_surveyActionTaken] == true;
   }
 
   set surveyActionTaken(bool value) {
     assert(activeSurvey != null);
-    final prop = properties[activeSurvey!];
+    final prop = properties[activeSurvey!] as Map;
     rewriteActiveSurvey(value, prop[_surveyShownCount]);
   }
 

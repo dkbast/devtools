@@ -73,14 +73,14 @@ class IsolateStatisticsViewController extends DisposableController
     // given tag's scope in the VM. These raw counts are reported here and
     // need to be processed.
     final tagCounters = isolate.tagCounters;
-    final names = tagCounters['names'];
-    final List<int> counters = tagCounters['counters'].cast<int>();
+    final names = (tagCounters['names'] as List).cast<String>();
+    final List<int> counters = (tagCounters['counters'] as List).cast<int>();
     final percentages = <String, double>{};
     int totalTickCount = 0;
     for (int i = 0; i < counters.length; ++i) {
       // Ignore tags with empty counts.
       if (counters[i] == 0) continue;
-      percentages[names[i] as String] = counters[i].toDouble();
+      percentages[names[i]] = counters[i].toDouble();
       totalTickCount += counters[i];
     }
     _tags = <VMTag>[

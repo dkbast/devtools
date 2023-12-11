@@ -13,11 +13,11 @@ class UniversalLinkSettings {
   );
 
   factory UniversalLinkSettings.fromJson(String json) {
-    final jsonObject = jsonDecode(json);
+    final jsonObject = jsonDecode(json) as Map;
     return UniversalLinkSettings._(
       jsonObject[_kBundleIdentifierKey] as String? ?? '',
       jsonObject[_kTeamIdentifierKey] as String? ?? '',
-      jsonObject[_kAssociatedDomainsKey].cast<String>() as List<String>,
+      (jsonObject[_kAssociatedDomainsKey] as List).cast<String>(),
     );
   }
 

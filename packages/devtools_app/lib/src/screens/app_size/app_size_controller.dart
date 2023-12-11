@@ -647,7 +647,7 @@ class AppSizeController {
       );
     } else {
       // TODO(peterdjlee): Investigate why there are leaf nodes with size of null.
-      final byteSize = treeJson['value'];
+      final byteSize = treeJson['value'] as int?;
       if (byteSize == null) {
         return null;
       }

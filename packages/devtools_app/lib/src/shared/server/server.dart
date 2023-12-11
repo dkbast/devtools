@@ -78,7 +78,7 @@ DevToolsJsonFile _devToolsJsonFileFromResponse(
   Response resp,
   String filePath,
 ) {
-  final data = json.decode(resp.body);
+  final data = json.decode(resp.body) as Map;
   final lastModified = data['lastModifiedTime'];
   final lastModifiedTime =
       lastModified != null ? DateTime.parse(lastModified) : DateTime.now();

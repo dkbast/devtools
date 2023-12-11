@@ -9,10 +9,10 @@ class XcodeBuildOptions {
   const XcodeBuildOptions._(this.configurations, this.targets);
 
   factory XcodeBuildOptions.fromJson(String json) {
-    final jsonObject = jsonDecode(json);
+    final jsonObject = jsonDecode(json) as Map;
     return XcodeBuildOptions._(
-      jsonObject[_kConfigurationsKey].cast<String>() as List<String>,
-      jsonObject[_kTargetsKey].cast<String>() as List<String>,
+      (jsonObject[_kConfigurationsKey] as List).cast<String>(),
+      (jsonObject[_kTargetsKey] as List).cast<String>(),
     );
   }
 

@@ -20,8 +20,8 @@ class ClassHeapDetailStats {
         isStacktraced = traceAllocations;
 
   factory ClassHeapDetailStats.fromJson(Map<String, dynamic> json) {
-    final classId = json['class']['id'];
-    final className = json['class']['name'];
+    final classId = (json['class'] as Map)['id'];
+    final className = (json['class'] as Map)['name'];
 
     return ClassHeapDetailStats(
       ClassRef(id: classId, name: className),

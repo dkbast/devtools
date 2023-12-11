@@ -284,7 +284,7 @@ class AllocationMemoryJson extends MemoryJson<ClassHeapStats> {
     assert(oldVersion == 1);
     final updatedPayload = Map<String, dynamic>.of(payload);
     updatedPayload['version'] = version;
-    final oldData = payload['data'];
+    final oldData = (payload['data'] as List).cast<Map>();
     updatedPayload['data'] = [
       for (final data in oldData)
         {
