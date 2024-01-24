@@ -623,15 +623,18 @@ class AppSizeController {
     }
   }
 
-  /// Recursively generates a diff tree from [treeJson] that contains the difference
-  /// between an old size analysis file and a new size analysis file.
+  /// Recursively generates a diff tree from [treeJson] that contains the
+  /// difference between an old size analysis file and a new size analysis file.
   ///
-  /// Each node in the resulting tree represents a change in size for the given node.
+  /// Each node in the resulting tree represents a change in size for the given
+  /// node.
   ///
   /// The tree can be filtered with different [DiffTreeType] values:
-  /// * [DiffTreeType.increaseOnly]: returns a tree with nodes with positive [byteSize].
-  /// * [DiffTreeType.decreaseOnly]: returns a tree with nodes with negative [byteSize].
-  /// * [DiffTreeType.combined]: returns a tree with all nodes.
+  /// * [DiffTreeType.increaseOnly] - returns a tree with nodes with positive
+  ///   [byteSize].
+  /// * [DiffTreeType.decreaseOnly] - returns a tree with nodes with negative
+  ///   [byteSize].
+  /// * [DiffTreeType.combined] - returns a tree with all nodes.
   TreemapNode? generateDiffTree(
     Map<String, dynamic> treeJson,
     DiffTreeType diffTreeType, {

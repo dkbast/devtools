@@ -119,9 +119,6 @@ class DevToolsAppState extends State<DevToolsApp> with AutoDisposeMixin {
 
   bool _isDarkThemeEnabledPreference = true;
 
-  bool get denseModeEnabled => _denseModeEnabled;
-  bool _denseModeEnabled = false;
-
   final hoverCardController = HoverCardController();
 
   late ReleaseNotesController releaseNotesController;
@@ -168,13 +165,6 @@ class DevToolsAppState extends State<DevToolsApp> with AutoDisposeMixin {
     addAutoDisposeListener(preferences.darkModeTheme, () {
       setState(() {
         _isDarkThemeEnabledPreference = preferences.darkModeTheme.value;
-      });
-    });
-
-    _denseModeEnabled = preferences.denseModeEnabled.value;
-    addAutoDisposeListener(preferences.denseModeEnabled, () {
-      setState(() {
-        _denseModeEnabled = preferences.denseModeEnabled.value;
       });
     });
 
@@ -438,7 +428,7 @@ class DevToolsAppState extends State<DevToolsApp> with AutoDisposeMixin {
 ///
 /// [C] corresponds to the type of the screen's controller, which is created by
 /// [createController] or provided by [controllerProvider].
-class DevToolsScreen<C> {
+class DevToolsScreen<C extends Object?> {
   const DevToolsScreen(
     this.screen, {
     this.createController,
