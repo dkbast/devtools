@@ -13,9 +13,13 @@ class AppLinkSettings {
 
   factory AppLinkSettings.fromJson(String json) {
     final jsonObject = jsonDecode(json) as Map;
+    final {
+      _kApplicationIdKey: String applicationId,
+      _kDeeplinksKey: List<Object?> deepLinks,
+    } = jsonObject;
     return AppLinkSettings._(
-      jsonObject[_kApplicationIdKey] as String,
-      (jsonObject[_kDeeplinksKey] as List<dynamic>)
+      applicationId,
+      deepLinks
           .cast<Map<String, dynamic>>()
           .map<AndroidDeeplink>(AndroidDeeplink._fromJsonObject)
           .toList(),
